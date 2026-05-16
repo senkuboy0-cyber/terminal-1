@@ -1,6 +1,10 @@
 name: Ubuntu Web Terminal
 
 on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
   workflow_dispatch: # manually trigger করতে হবে
 
 jobs:
