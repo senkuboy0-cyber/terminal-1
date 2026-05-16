@@ -2,10 +2,10 @@ name: Ubuntu Web Terminal
 
 on:
   push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
-  workflow_dispatch:
+    branches:
+      - main
+  schedule:
+    - cron: '0 */5 * * *'  # প্রতি ৫ ঘণ্টায় auto restart
 
 jobs:
   terminal:
@@ -21,9 +21,10 @@ jobs:
 
       - name: Start Terminal & Get URL
         run: |
-          ttyd -p 7681 bash &
+          pkill ttyd || true
+          ttyd --writable -p 8080 bash &
           sleep 2
-          ./cloudflared tunnel --url http://localhost:7681 &
-          sleep 5
-          # URL লগে দেখাবে, 6 ঘণ্টা চালু থাকবে
+          ./cloudflared tunnel --url http://localhost:8080 2>&1 | tee /tmp/cf.log &
+          sleep 10
+          grep -o 'https://[a-z0-9-]*.trycloudflare.com' /tmp/cf.log
           sleep 21600
