@@ -1,18 +1,25 @@
 name: Ubuntu Web Terminal
 
 on:
-  push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
-  workflow_dispatch: # manually trigger করতে হবে
+  workflow_dispatch:
 
 jobs:
-  build:
+  terminal:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - name: Install ttyd
+        run: sudo apt-get install -y ttyd
 
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
+      - name: Install cloudflared
+        run: |
+          curl -Lo cloudflared https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
+          chmod +x cloudflared
+
+      - name: Start Terminal & Get URL
+        run: |
+          ttyd -p 7681 bash &
+          sleep 2
+          ./cloudflared tunnel --url http://localhost:7681 &
+          sleep 5
+          # URL লগে দেখাবে, 6 ঘণ্টা চালু থাকবে
+          sleep 21600
