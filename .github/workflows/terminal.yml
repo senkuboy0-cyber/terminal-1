@@ -1,0 +1,16 @@
+name: Ubuntu Web Terminal
+
+on:
+  workflow_dispatch: # manually trigger করতে হবে
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        with:
+          limit-access-to-actor: true  # শুধু তুমি access করতে পারবে
